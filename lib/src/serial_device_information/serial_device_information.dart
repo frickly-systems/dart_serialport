@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:path/path.dart' as path;
 
 part 'usb_device_information.dart';
 
@@ -25,4 +24,12 @@ class SerialDeviceInformation extends Equatable {
         deviceName,
         devicePath,
       ];
+
+  @override
+  String toString() {
+    return 'SerialDeviceInformation{ '
+        'deviceName: $deviceName, '
+        'devicePath: $devicePath, '
+        '}';
+  }
 }

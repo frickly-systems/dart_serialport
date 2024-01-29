@@ -34,9 +34,27 @@ class SerialPortListLinux implements SerialPortList {
     Glob('/dev/ttyGS*'),
   ];
 
-  static bool _isSerialDevice(File file) {
-    final path = file.path;
-    return _deviceFilter.any((filter) => filter.matches(path));
+  @override
+  Future<Iterable<SerialDeviceInformation>> listEntries() {
+    bool isSerialDevice(File file) {
+      final path = file.path;
+      return _deviceFilter.any((filter) => filter.matches(path));
+    }
+
+    final rawDevices = Directory('/dev')
+        .listSync()
+        .whereType<File>()
+        .where(isSerialDevice)
+        .toList();
+
+    final devices = rawDevices.map(
+      (device) {
+        final deviceName = path.basename(device.path);
+        return _toDeviceInfo(deviceName);
+      },
+    );
+
+    return Future.value(devices);
   }
 
   SerialDeviceInformation _toDeviceInfo(String deviceName) {
@@ -53,11 +71,14 @@ class SerialPortListLinux implements SerialPortList {
       );
     }
 
-    final subsystemPath = _subsystemPath(deviceName);
-    final subsystem = path.basename(subsystemPath);
+    final subsystem = path.basename(
+      File('/sys/class/tty/$deviceName/device/subsystem')
+          .absolute
+          .resolveSymbolicLinksSync(),
+    );
 
     if (subsystem == 'usb' || subsystem == 'usb-serial') {
-      return USBDeviceInformation(
+      return _generateUSBDeviceInformation(
         devicePath: devicePath,
         deviceName: deviceName,
         subsystem: subsystem,
@@ -70,26 +91,53 @@ class SerialPortListLinux implements SerialPortList {
     );
   }
 
-  String _subsystemPath(String deviceName) =>
-      File('/sys/class/tty/$deviceName/device/subsystem')
-          .absolute
-          .resolveSymbolicLinksSync();
+  USBDeviceInformation _generateUSBDeviceInformation({
+    required String deviceName,
+    required Directory devicePath,
+    required String subsystem,
+  }) {
+    Directory usbInterfacePath() {
+      if (subsystem == 'usb') {
+        return devicePath;
+      }
 
-  @override
-  Future<Iterable<SerialDeviceInformation>> listEntries() {
-    final rawDevices = Directory('/dev')
-        .listSync()
-        .whereType<File>()
-        .where(_isSerialDevice)
-        .toList();
+      return devicePath.parent;
+    }
 
-    final devices = rawDevices.map(
-      (device) {
-        final deviceName = path.basename(device.path);
-        return _toDeviceInfo(deviceName);
-      },
+    final usbDevicePath = usbInterfacePath().parent;
+    String readProperty(String property, {Directory? basepath}) {
+      final propertyFile =
+          File(path.join((basepath ?? usbDevicePath).path, property));
+      if (propertyFile.existsSync()) {
+        return propertyFile.readAsLinesSync().first;
+      }
+      return '';
+    }
+
+    final numberOfInterfaces =
+        int.tryParse(readProperty('bNumInterfaces')) ?? 1;
+    final vid = int.parse(readProperty('idVendor'), radix: 16);
+    final pid = int.parse(readProperty('idProduct'), radix: 16);
+    final serialNumber = readProperty('serial');
+    final manufacturer = readProperty('manufacturer');
+    final product = readProperty('product');
+    final interface = readProperty('interface', basepath: usbInterfacePath());
+
+    final location =
+        numberOfInterfaces == 1 ? usbDevicePath : usbInterfacePath();
+
+    return USBDeviceInformation(
+      deviceName: deviceName,
+      devicePath: devicePath,
+      subsystem: subsystem,
+      vid: vid,
+      pid: pid,
+      serialNumber: serialNumber,
+      numberOfInterfaces: numberOfInterfaces,
+      location: location,
+      manufacturer: manufacturer,
+      product: product,
+      interface: interface,
     );
-
-    return Future.value(devices);
   }
 }
