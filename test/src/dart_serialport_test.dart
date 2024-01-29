@@ -4,16 +4,12 @@ import 'package:test/test.dart';
 
 void main() {
   group('DartSerialport', () {
-    test('can be instantiated', () {
-      expect(DartSerialport(), isNotNull);
-    });
-
     test('can list ports', () async {
-      final ports = await SerialPortList().info();
+      final ports = await SerialPortListLinux().entries();
 
       for (final port
           in ports.where((element) => element.deviceName == 'ttyACM0')) {
-        print(port.usbInformation);
+        print(port.enrich() as USBDeviceInformation);
       }
       expect(ports, isNotEmpty);
     });
