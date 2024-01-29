@@ -7,5 +7,15 @@ void main() {
     test('can be instantiated', () {
       expect(DartSerialport(), isNotNull);
     });
+
+    test('can list ports', () async {
+      final ports = await SerialPortList().info();
+
+      for (final port
+          in ports.where((element) => element.deviceName == 'ttyACM0')) {
+        print(port.usbInformation);
+      }
+      expect(ports, isNotEmpty);
+    });
   });
 }

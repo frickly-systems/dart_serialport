@@ -17,7 +17,11 @@ class SerialPort {}
 
 class SerialDeviceInfo {
   SerialDeviceInfo({required this.deviceName})
-      : devicePath = Directory('/sys/class/tty/$deviceName/device');
+      : devicePath = Directory(
+          Directory('/sys/class/tty/$deviceName/device')
+              .absolute
+              .resolveSymbolicLinksSync(),
+        );
   final String deviceName;
   final Directory devicePath;
 
@@ -70,6 +74,17 @@ class SerialDeviceInfo {
     final interface = readProperty('interface', basepath: usbInterfacePath);
 
     final location = numberOfInterfaces == 1 ? usbDevicePath : usbInterfacePath;
+
+    return UsbInformation(
+      vid: vid,
+      pid: pid,
+      serialNumber: serialNumber,
+      numberOfInterfaces: numberOfInterfaces,
+      location: location.path,
+      interfaceDescription: interface,
+      manufacturer: manufacturer,
+      product: product,
+    );
   }
 }
 
@@ -93,6 +108,11 @@ class UsbInformation {
   final String location;
   final String manufacturer;
   final String product;
+
+  @override
+  String toString() {
+    return 'UsbInformation{vid: $vid, pid: $pid, serialNumber: $serialNumber, numberOfInterfaces: $numberOfInterfaces, interfaceDescription: $interfaceDescription, location: $location, manufacturer: $manufacturer, product: $product}';
+  }
 }
 
 class SerialPortList {
@@ -100,10 +120,7 @@ class SerialPortList {
       : _devices = Directory('/dev')
             .listSync()
             .whereType<File>()
-            .where(
-              (entity) =>
-                  _isSerialDevice(entity.absolute.resolveSymbolicLinksSync()),
-            )
+            .where(_isSerialDevice)
             .toList();
 
   late final List<File> _devices;
@@ -119,7 +136,21 @@ class SerialPortList {
     Glob('/dev/ttyGS*'),
   ];
 
-  static bool _isSerialDevice(String path) {
+  static bool _isSerialDevice(File file) {
+    final path = file.path;
     return _deviceFilter.any((filter) => filter.matches(path));
+  }
+
+  Future<List<SerialDeviceInfo>> info() async {
+    final devices = await Future.wait(
+      _devices.map(
+        (device) async {
+          final deviceName = basename(device.path);
+          return SerialDeviceInfo(deviceName: deviceName);
+        },
+      ),
+    );
+
+    return devices;
   }
 }
