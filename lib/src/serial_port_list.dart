@@ -72,7 +72,7 @@ class SerialPortListLinux implements SerialPortList {
     }
 
     final subsystem = path.basename(
-      File('/sys/class/tty/$deviceName/device/subsystem')
+      Directory(path.join(devicePath.path, 'subsystem'))
           .absolute
           .resolveSymbolicLinksSync(),
     );
