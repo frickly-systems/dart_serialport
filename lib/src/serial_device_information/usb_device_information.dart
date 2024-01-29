@@ -46,4 +46,21 @@ class USBDeviceInformation extends SerialDeviceInformation {
         manufacturer,
         product,
       ];
+
+  @override
+  String toString() {
+    return 'USBDeviceInformation('
+        'deviceName: $deviceName, '
+        'devicePath: $devicePath, '
+        'subsystem: $subsystem, '
+        'vid: $vid, '
+        'pid: $pid, '
+        'serialNumber: $serialNumber, '
+        'numberOfInterfaces: $numberOfInterfaces, '
+        'interface: $interface, '
+        'location: $location, '
+        'manufacturer: $manufacturer, '
+        'product: $product'
+        ')';
+  }
 }
