@@ -11,10 +11,10 @@ import 'package:test/test.dart';
 void main() {
   group('SerialPortLinux', () {
     final config1 = SerialPortConfig(port: '/tmp/ttyV0');
-    late final SerialPortLinux port;
+    late SerialPortLinux port;
 
     final config2 = SerialPortConfig(port: '/tmp/ttyV1');
-    late final SerialPortLinux port2;
+    late SerialPortLinux port2;
 
     setUp(() async {
       port = SerialPortLinux(config1);
