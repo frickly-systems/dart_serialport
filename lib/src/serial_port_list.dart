@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:io';
-import 'package:dart_serialport/dart_serialport.dart';
+import 'package:dart_serial/dart_serial.dart';
 import 'package:glob/glob.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;

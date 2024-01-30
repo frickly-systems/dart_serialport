@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:dart_periphery/dart_periphery.dart' as periphery;
-import 'package:dart_serialport/src/serial_port/serial_port.dart';
+import 'package:dart_serial/src/serial_port/serial_port.dart';
 
 class SerialPortLinux implements SerialPort {
   SerialPortLinux(this.config);

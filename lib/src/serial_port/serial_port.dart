@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:dart_serialport/src/serial_port/serial_port_linux.dart';
+import 'package:dart_serial/src/serial_port/serial_port_linux.dart';
 
 enum Parity {
   none,
