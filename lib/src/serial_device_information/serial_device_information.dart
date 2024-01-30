@@ -15,6 +15,8 @@ class SerialDeviceInformation extends Equatable {
   }) : _devicePath = devicePath;
 
   final String deviceName;
+  File? get port =>
+      File('/dev/$deviceName').existsSync() ? File('/dev/$deviceName') : null;
 
   final Directory? _devicePath;
   Directory? get devicePath => _devicePath;

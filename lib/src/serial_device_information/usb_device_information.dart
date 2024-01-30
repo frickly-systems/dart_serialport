@@ -31,6 +31,9 @@ class USBDeviceInformation extends SerialDeviceInformation {
   final String product;
 
   @override
+  File get port => File('/dev/$deviceName');
+
+  @override
   final Directory devicePath;
 
   @override

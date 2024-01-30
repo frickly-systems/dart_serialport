@@ -8,8 +8,10 @@ environment:
 dependencies:
   equatable: ^2.0.5
   glob: ^2.1.2
+  linux_serial: ^0.2.3+6
   meta: ^1.9.1
   path: ^1.8.3
+  stdlibc: ^0.1.4
 
 dev_dependencies:
   mocktail: ^1.0.0
