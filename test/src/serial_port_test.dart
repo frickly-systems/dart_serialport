@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors
-import 'dart:math';
 
 import 'package:dart_serialport/src/serial_port/serial_port.dart';
 import 'package:dart_serialport/src/serial_port/serial_port_linux.dart';
-import 'package:dart_serialport/src/serial_port_list.dart';
 import 'package:test/test.dart';
 
 // NOTE: This test must have two connected serial ports
