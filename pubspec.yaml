@@ -1,6 +1,11 @@
 name: dart_serialport
-description: A Very Good Project created by Very Good CLI.
-version: 0.1.0+1
+description: Dart package that aims to provide a platform-independent serial port API.
+version: 0.1.0-alpha.1
+license: MIT
+repository: https://github.com/frickly-systems/dart_serialport
+
+platforms:
+  linux:
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
