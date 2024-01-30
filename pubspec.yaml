@@ -6,6 +6,7 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  dart_periphery: ^0.9.5
   equatable: ^2.0.5
   glob: ^2.1.2
   meta: ^1.9.1
