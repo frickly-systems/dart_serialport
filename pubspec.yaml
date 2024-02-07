@@ -1,6 +1,6 @@
 name: dart_serial
 description: Dart package that aims to provide a platform-independent serial port API.
-version: 0.1.0-alpha.1
+version: 0.1.0-alpha.2
 license: MIT
 repository: https://github.com/frickly-systems/dart_serial
 

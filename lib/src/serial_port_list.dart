@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 
 @immutable
-sealed class SerialPortList {
+abstract class SerialPortList {
   factory SerialPortList() {
     if (Platform.isLinux) {
       return const SerialPortListLinux();
